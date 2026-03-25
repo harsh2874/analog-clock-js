@@ -1,0 +1,120 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: sans-serif;
+  color: #fff;
+}
+
+body {
+  display: flex;
+  justify-content: center; /* align item on center horizontally */
+  align-items: center; /* align item on center vertically */
+  min-height: 100vh;
+  background-color: #212121;
+}
+
+.container {
+  position: absolute;
+}
+
+.clock {
+  height: 300px;
+  width: 300px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  box-shadow: 0px 0px 30px rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.clock span {
+  /*
+    Explanation:
+    - var(--i): This is a CSS custom property (variable) named "--i". It's used here as an
+      index for each hour marker (typically 1..12). The HTML for each span usually sets it
+      inline, for example: <span style="--i:1"><b>1</b></span>.
+    - calc(30deg * var(--i)): calc() performs arithmetic in CSS. There are 12 hour marks,
+      and 360deg / 12 = 30deg per step. Multiplying 30deg by the index rotates each span to
+      its correct position around the clock face.
+    - inset: 12px: "inset" is a shorthand that sets top/right/bottom/left offsets in one
+      declaration (equivalent to top:12px; right:12px; bottom:12px; left:12px;). Here it
+      reduces the span's box from each side by 12px so the hour markers sit slightly inside
+      the clock's edge (it effectively controls the radius where the numbers appear).
+      Using inset keeps the code concise and ensures the marker is centered along the
+      circular edge regardless of the clock size.
+    - These are comments only; no behavior is changed by adding them.
+  */
+  position: absolute;
+  transform: rotate(calc(30deg * var(--i)));
+  inset: 12px;
+  text-align: center;
+}
+
+.clock span b {
+  /*
+    Explanation:
+    - The inner <b> element is rotated back by the negative of the outer rotation:
+      transform: rotate(calc(-30deg * var(--i))). This counter-rotation keeps the
+      hour number upright/readable while the span itself is positioned around the circle.
+    - Using calc() with var(--i) ensures the numeric label doesn't rotate with the marker.
+  */
+  display: inline-block;
+  transform: rotate(calc(-30deg * var(--i)));
+  font-size: 20px;
+}
+
+.clock::before {
+  /*
+    Explanation:
+    - The double-colon syntax `::` denotes a CSS pseudo-element. Pseudo-elements create
+      a "virtual" element that is treated like a child of the selected element.
+      Historically a single colon (`:before`) was used; modern specs prefer `::before` to
+      distinguish pseudo-elements from pseudo-classes (like `:hover`). Both are widely
+      supported for backward compatibility, but `::before` is the recommended form.
+    - `::before` inserts generated content before the element's actual content. The
+      `content` property must be present (even if empty) for the pseudo-element to be
+      generated — e.g. `content: "";` creates an empty box you can style.
+    - In this clock, `.clock::before` is used to draw the small center dot (the pivot of the
+      hands). It's positioned absolutely and given a size/background so it appears centered.
+    - Positioning note: the pseudo-element is a child of `.clock` in the DOM flow. Its
+      absolute positioning will be relative to the nearest positioned ancestor. Here the
+      code relies on the stacking and placement so the dot sits visually in the clock center.
+    - `z-index: 2` ensures the center dot appears above the clock hands (which improves
+      visual clarity by covering the central ends of the hands).
+    - This is purely explanatory; no style or behavior is changed by adding this comment.
+  */
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  border-radius: 50%;
+  z-index: 2; /* to show the center point of clock on top of the hands */
+}
+
+.hand {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.hand i {
+  /*
+    Explanation:
+    - The selector targets an <i> element used as the visual hand (not the variable "i").
+    - var(--clr) and var(--h) are other CSS custom properties (variables) —
+      --clr typically supplies the hand color, and --h supplies the hand height.
+      These are set on the parent hand elements (or inline) so each hand can have
+      different color/length without duplicating styles.
+    - Using CSS variables makes the hand styling flexible and easy to tweak.
+  */
+  position: absolute;
+  background-color: var(--clr);
+  width: 4px;
+  height: var(--h);
+  border-radius: 8px;
+}
